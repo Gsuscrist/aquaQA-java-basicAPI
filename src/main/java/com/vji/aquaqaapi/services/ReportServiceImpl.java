@@ -1,6 +1,7 @@
 package com.vji.aquaqaapi.services;
 
 import com.vji.aquaqaapi.controllers.dtos.requests.CreateReportRequest;
+import com.vji.aquaqaapi.controllers.dtos.responses.BaseResponse;
 import com.vji.aquaqaapi.controllers.dtos.responses.GetReportResponse;
 import com.vji.aquaqaapi.entities.Report;
 import com.vji.aquaqaapi.entities.User;
@@ -10,6 +11,7 @@ import com.vji.aquaqaapi.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 
@@ -28,22 +30,38 @@ public class ReportServiceImpl implements IReportService {
     private  IUserService userService;
 
     @Override
-    public GetReportResponse get(Long id) {
-        return from(id);
+    public BaseResponse get(Long id) {
+        GetReportResponse response = from(id);
+        return BaseResponse.builder()
+                .data(response)
+                .message("Report by ID")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
-    public List<GetReportResponse> list() {
-        return repository
+    public BaseResponse list() {
+        List<GetReportResponse> response =  repository
                 .findAll()
                 .stream()
                 .map(this::from)
                 .collect(Collectors.toList());
+        return BaseResponse.builder()
+                .data(response)
+                .message("Report's list")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
-    public GetReportResponse create(CreateReportRequest request) {
-        return from(repository.save(from(request)));
+    public BaseResponse create(CreateReportRequest request) {
+        GetReportResponse response = from(repository.save(from(request)));
+
+        return BaseResponse.builder()
+                .data(response)
+                .message("Report Creation")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
 
