@@ -3,10 +3,12 @@ package com.vji.aquaqaapi.controllers;
 import com.vji.aquaqaapi.controllers.dtos.requests.CreateReportRequest;
 import com.vji.aquaqaapi.controllers.dtos.requests.CreateUserRequest;
 import com.vji.aquaqaapi.controllers.dtos.requests.UpdateUserRequest;
+import com.vji.aquaqaapi.controllers.dtos.responses.BaseResponse;
 import com.vji.aquaqaapi.controllers.dtos.responses.GetUserResponse;
 import com.vji.aquaqaapi.repositories.IUserRepository;
 import com.vji.aquaqaapi.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,23 +20,28 @@ public class UserController {
     private IUserService service;
 
     @GetMapping("{id}")
-    public GetUserResponse get(@PathVariable Long id){
-    return service.get(id);
+    public ResponseEntity<BaseResponse> get(@PathVariable Long id){
+    BaseResponse baseResponse = service.get(id);
+    return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @GetMapping
-    public List<GetUserResponse> list(){
-        return service.list();
+    public ResponseEntity<BaseResponse> list(){
+        BaseResponse baseResponse = service.list();
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @PostMapping
-    public GetUserResponse create(@RequestBody CreateUserRequest request){
-        return service.create(request);
+    public ResponseEntity<BaseResponse> create(@RequestBody CreateUserRequest request){
+        BaseResponse baseResponse = service.create(request);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+
     }
 
     @PutMapping("{id}")
-    public GetUserResponse update(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
-        return service.update(id, request);
+    public ResponseEntity<BaseResponse> update(@PathVariable Long id, @RequestBody UpdateUserRequest request) {
+        BaseResponse baseResponse= service.update(id, request);
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @DeleteMapping("{id}")

@@ -2,19 +2,21 @@ package com.vji.aquaqaapi.services.interfaces;
 
 import com.vji.aquaqaapi.controllers.dtos.requests.CreateUserRequest;
 import com.vji.aquaqaapi.controllers.dtos.requests.UpdateUserRequest;
+import com.vji.aquaqaapi.controllers.dtos.responses.BaseResponse;
 import com.vji.aquaqaapi.controllers.dtos.responses.GetUserResponse;
 import com.vji.aquaqaapi.entities.User;
 
+import java.util.Base64;
 import java.util.List;
 
 public interface IUserService {
-    GetUserResponse get(Long id);
+    BaseResponse get(Long id);
 
-    List<GetUserResponse> list();
+    BaseResponse list();
 
-    GetUserResponse create(CreateUserRequest request);
+    BaseResponse create(CreateUserRequest request);
 
-    GetUserResponse update(Long id, UpdateUserRequest request);
+    BaseResponse update(Long id, UpdateUserRequest request);
 
     User findById(Long id);
 

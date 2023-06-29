@@ -2,10 +2,12 @@ package com.vji.aquaqaapi.controllers;
 
 
 import com.vji.aquaqaapi.controllers.dtos.requests.CreateReportRequest;
+import com.vji.aquaqaapi.controllers.dtos.responses.BaseResponse;
 import com.vji.aquaqaapi.controllers.dtos.responses.GetReportResponse;
 import com.vji.aquaqaapi.services.interfaces.IReportService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,19 +19,22 @@ public class ReportController {
     private IReportService service;
 
     @GetMapping("{id}")
-    public GetReportResponse get(@PathVariable Long id){
-    return service.get(id);
+    public ResponseEntity<BaseResponse> get(@PathVariable Long id){
+    BaseResponse baseResponse = service.get(id);
+    return new ResponseEntity<>(baseResponse,baseResponse.getHttpStatus());
     }
 
     @GetMapping
-    public List<GetReportResponse> list(){
-        return service.list();
+    public ResponseEntity<BaseResponse> list(){
+        BaseResponse baseResponse =  service.list();
+        return new ResponseEntity<>(baseResponse,baseResponse.getHttpStatus());
     }
 
     @PostMapping
-    public GetReportResponse create(@RequestBody CreateReportRequest request){
+    public ResponseEntity<BaseResponse> create(@RequestBody CreateReportRequest request){
 
-        return service.create(request);
+        BaseResponse baseResponse = service.create(request);
+        return new ResponseEntity<>(baseResponse,baseResponse.getHttpStatus());
     }
 
 

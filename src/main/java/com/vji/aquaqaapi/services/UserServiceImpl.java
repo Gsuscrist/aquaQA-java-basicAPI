@@ -2,15 +2,18 @@ package com.vji.aquaqaapi.services;
 
 import com.vji.aquaqaapi.controllers.dtos.requests.CreateUserRequest;
 import com.vji.aquaqaapi.controllers.dtos.requests.UpdateUserRequest;
+import com.vji.aquaqaapi.controllers.dtos.responses.BaseResponse;
 import com.vji.aquaqaapi.controllers.dtos.responses.GetUserResponse;
 import com.vji.aquaqaapi.entities.User;
 import com.vji.aquaqaapi.repositories.IUserRepository;
 import com.vji.aquaqaapi.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,8 +24,13 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public GetUserResponse get(Long id) {
-        return from(id);
+    public BaseResponse get(Long id) {
+        GetUserResponse response = from(id);
+        return BaseResponse.builder()
+                .data(response)
+                .message("User by ID")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
@@ -32,17 +40,36 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<GetUserResponse> list() {
-         return repository
+    public BaseResponse list() {
+         List<GetUserResponse> response= repository
                 .findAll()
                 .stream()
                 .map(this::from)
                 .collect(Collectors.toList());
+
+        return BaseResponse.builder()
+                .data(response)
+                .message("Users list")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
-    public GetUserResponse create(CreateUserRequest request) {
-        return from(repository.save(from(request)));
+    public BaseResponse create(CreateUserRequest request) {
+        User user = from(request);
+        if (isEmailUnique(request.getEmail())){
+            return BaseResponse.builder()
+                    .data(from(repository.save(user)))
+                    .message("User created correctly")
+                    .success(Boolean.TRUE)
+                    .httpStatus(HttpStatus.CREATED).build();
+        }
+
+        return BaseResponse.builder()
+                .data("user already exist :V")
+                .message("User's email already exist")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.CONFLICT).build();
     }
 
     @Override
@@ -52,10 +79,15 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public GetUserResponse update(Long id, UpdateUserRequest request) {
+    public BaseResponse update(Long id, UpdateUserRequest request) {
         User user = repository.findById(id).orElseThrow(()->new RuntimeException("user do not exist"));
         user = update(user, request);
-        return from(user);
+        GetUserResponse response = from(user);
+        return BaseResponse.builder()
+                .data(response)
+                .message("user updated")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
     }
 
     @Override
@@ -115,4 +147,12 @@ public class UserServiceImpl implements IUserService {
                 .map(this::from)
                 .orElseThrow(() -> new RuntimeException("The user does not exist"));
     }
+
+    public boolean isEmailUnique(String email) {
+        Optional<User> existingUser = repository.findByEmail(email);
+        return existingUser.isEmpty();
+    }
+
+
+
 }
