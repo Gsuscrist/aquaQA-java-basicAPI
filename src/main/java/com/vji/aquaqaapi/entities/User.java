@@ -30,4 +30,6 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<Report> reports;
+
+
 }
