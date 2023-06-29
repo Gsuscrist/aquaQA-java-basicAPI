@@ -7,7 +7,7 @@ import com.vji.aquaqaapi.entities.User;
 import com.vji.aquaqaapi.repositories.IUserRepository;
 import com.vji.aquaqaapi.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,11 +18,17 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private IUserRepository repository;
-    
+
 
     @Override
     public GetUserResponse get(Long id) {
         return from(id);
+    }
+
+    @Override
+    public User getUser(String email) {
+        return repository.findByEmail(email)
+                .orElseThrow(RuntimeException::new);
     }
 
     @Override
@@ -63,12 +69,12 @@ public class UserServiceImpl implements IUserService {
         user.setLastname(request.getLastname());
         user.setPhoneNumber(request.getPhoneNumber());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword((new BCryptPasswordEncoder().encode(request.getPassword())));
 
         if (request.getRol() == null){
             user.setRol("user");
         }else {
-            user.setRol(user.getRol());
+            user.setRol(request.getRol());
         }
         return repository.save(user);
     }
@@ -81,11 +87,11 @@ public class UserServiceImpl implements IUserService {
         user.setPhoneNumber(request.getPhoneNumber());
 
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(new BCryptPasswordEncoder().encode(request.getPassword()));
         if (request.getRol() == null){
             user.setRol("user");
         }else {
-            user.setRol(user.getRol());
+            user.setRol(request.getRol());
         }
 
         return user;
