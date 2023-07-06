@@ -11,7 +11,7 @@ public class GetUserResponse {
 
     private String lastname;
 
-    private Integer phoneNumber;
+    private Long phoneNumber;
 
     private String email;
 

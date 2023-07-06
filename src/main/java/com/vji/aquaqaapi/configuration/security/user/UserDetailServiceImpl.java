@@ -1,4 +1,4 @@
-package com.vji.aquaqaapi.security.user;
+package com.vji.aquaqaapi.configuration.security.user;
 
 import com.vji.aquaqaapi.entities.User;
 import com.vji.aquaqaapi.services.interfaces.IUserService;
@@ -9,18 +9,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailServiceImpl implements UserDetailsService {
     @Autowired
     private IUserService service;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = service.getUser(username);
-        if (user.getName().isEmpty()){
-            return null;
-        }else {
-            return new UserDetailsImpl(user);
-        }
-
+        User user = service.getUserByEmail(username);
+        return new UserDetailsImpl(user);
     }
 }

@@ -19,4 +19,12 @@ public interface IReportService {
 
     List<Float> listDailyDataOf(String sensorId, Long userId);
 
+    List<Float> listWeeklyDataOf(String sensorId,Long userId);
+
+    List<Float> listMonthlyDataOf(String sensorId, Long userId);
+
+    List<Float> listYearlyDataOf(String sensorId, Long userId);
+
+
+
 }

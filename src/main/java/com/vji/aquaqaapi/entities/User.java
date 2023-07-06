@@ -20,7 +20,7 @@ public class User {
 
     private String lastname;
 
-    private Integer phoneNumber;
+    private Long phoneNumber;
 
     private String email;
 

@@ -1,16 +1,15 @@
-package com.vji.aquaqaapi.security.filters;
+package com.vji.aquaqaapi.configuration.security.filter;
 
-import com.vji.aquaqaapi.utilities.TokenUtils;
+import com.vji.aquaqaapi.utilities.TokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.jetbrains.annotations.NotNull;
+import lombok.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 
 import java.io.IOException;
 
@@ -18,17 +17,18 @@ import java.io.IOException;
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
-                                    @NotNull HttpServletResponse response,
-                                    @NotNull FilterChain filterChain) throws ServletException, IOException {
+                                    @NonNull HttpServletResponse response,
+                                    @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         String bearerToken = request.getHeader("Authorization");
 
-        if(bearerToken != null && bearerToken.startsWith("Bearer ")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             String token = bearerToken.replace("Bearer ", "");
-            UsernamePasswordAuthenticationToken userNamePAT = TokenUtils.getAuthentication(token);
+            UsernamePasswordAuthenticationToken userNamePAT = TokenUtil.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(userNamePAT);
         }
 
         filterChain.doFilter(request, response);
+
     }
 }

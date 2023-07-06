@@ -1,4 +1,4 @@
-package com.vji.aquaqaapi.security.user;
+package com.vji.aquaqaapi.configuration.security.user;
 
 import lombok.Data;
 

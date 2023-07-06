@@ -72,7 +72,22 @@ public class ReportServiceImpl implements IReportService {
 
     @Override
     public List<Float> listDailyDataOf(String sensorId, Long userId) {
-        return getDataOf(sensorId,userId);
+        return getDailyDataOf(sensorId,userId);
+    }
+
+    @Override
+    public List<Float> listWeeklyDataOf(String sensorId, Long userId) {
+        return getWeeklyDataOf(sensorId,userId);
+    }
+
+    @Override
+    public List<Float> listMonthlyDataOf(String sensorId, Long userId) {
+        return getMonthlyDataOf(sensorId,userId);
+    }
+
+    @Override
+    public List<Float> listYearlyDataOf(String sensorId, Long userId) {
+        return getYearlyDataOf(sensorId,userId);
     }
 
     private Report from(CreateReportRequest request){
@@ -112,7 +127,7 @@ public class ReportServiceImpl implements IReportService {
                 .orElseThrow(()->new RuntimeException("report doesnt exist"));
     }
 
-    private List<Float> getDataOf(String sensorId,Long userId) {
+    public List<Float> getDailyDataOf(String sensorId,Long userId) {
         List<Float> data = switch (sensorId) {
             case "etemp" -> repository.getDailyExtTempDataOf(userId);
             case "ehum" -> repository.getDailyExtHumDataOf(userId);
@@ -121,6 +136,49 @@ public class ReportServiceImpl implements IReportService {
             case "tds" -> repository.getDailyTdsDataOf(userId);
             case "ts" -> repository.getDailyTsDataOf(userId);
             case "tension" -> repository.getDailyTensionDataOf(userId);
+            default -> new ArrayList<>();
+        };
+        return data;
+    }
+
+    private List<Float> getWeeklyDataOf(String sensorId,Long userId) {
+        List<Float> data = switch (sensorId) {
+            case "etemp" -> repository.getWeeklyExtTempDataOf(userId);
+            case "ehum" -> repository.getWeeklyExtHumDataOf(userId);
+            case "itemp" -> repository.getWeeklyInterTempDataOf(userId);
+            case "ph" -> repository.getWeeklyPhDataOf(userId);
+            case "tds" -> repository.getWeeklyTdsDataOf(userId);
+            case "ts" -> repository.getWeeklyTsDataOf(userId);
+            case "tension" -> repository.getWeeklyTensionDataOf(userId);
+            default -> new ArrayList<>();
+        };
+        return data;
+    }
+
+
+    private List<Float> getMonthlyDataOf(String sensorId,Long userId) {
+        List<Float> data = switch (sensorId) {
+            case "etemp" -> repository.getMonthlyExtTempDataOf(userId);
+            case "ehum" -> repository.getMonthlyExtHumDataOf(userId);
+            case "itemp" -> repository.getMonthlyInterTempDataOf(userId);
+            case "ph" -> repository.getMonthlyPhDataOf(userId);
+            case "tds" -> repository.getMonthlyTdsDataOf(userId);
+            case "ts" -> repository.getMonthlyTsDataOf(userId);
+            case "tension" -> repository.getMonthlyTensionDataOf(userId);
+            default -> new ArrayList<>();
+        };
+        return data;
+    }
+
+    private List<Float> getYearlyDataOf(String sensorId,Long userId) {
+        List<Float> data = switch (sensorId) {
+            case "etemp" -> repository.getYearlyExtTempDataOf(userId);
+            case "ehum" -> repository.getYearlyExtHumDataOf(userId);
+            case "itemp" -> repository.getYearlyInterTempDataOf(userId);
+            case "ph" -> repository.getYearlyPhDataOf(userId);
+            case "tds" -> repository.getYearlyTdsDataOf(userId);
+            case "ts" -> repository.getYearlyTsDataOf(userId);
+            case "tension" -> repository.getYearlyTensionDataOf(userId);
             default -> new ArrayList<>();
         };
         return data;
