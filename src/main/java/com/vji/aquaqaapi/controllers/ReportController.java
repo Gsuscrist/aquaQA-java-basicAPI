@@ -46,11 +46,25 @@ public class ReportController {
 
 //    all reports
 
-    @GetMapping("/data/{sensorId}/{userId}")
-    public List<Float> getDataOf(@PathVariable String sensorId,@PathVariable Long userId){
+    @GetMapping("/daily/data/{sensorId}/{userId}")
+    public List<Float> getDailyDataOf(@PathVariable String sensorId,@PathVariable Long userId){
         return service.listDailyDataOf(sensorId,userId);
     }
 
+    @GetMapping("/weekly/data/{sensorId}/{userId}")
+    public List<Float> getWeeklyDataOf(@PathVariable String sensorId,@PathVariable Long userId){
+        return service.listWeeklyDataOf(sensorId,userId);
+    }
+
+    @GetMapping("/monthly/data/{sensorId}/{userId}")
+    public List<Float> getMonthlyDataOf(@PathVariable String sensorId,@PathVariable Long userId){
+        return service.listMonthlyDataOf(sensorId,userId);
+    }
+
+    @GetMapping("/yearly/data/{sensorId}/{userId}")
+    public List<Float> getYearlyDataOf(@PathVariable String sensorId,@PathVariable Long userId){
+        return service.listYearlyDataOf(sensorId,userId);
+    }
 
 
 

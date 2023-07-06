@@ -31,7 +31,7 @@ public class UserController {
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    @PostMapping
+    @PostMapping("/sing-up")
     public ResponseEntity<BaseResponse> create(@RequestBody CreateUserRequest request){
         BaseResponse baseResponse = service.create(request);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());

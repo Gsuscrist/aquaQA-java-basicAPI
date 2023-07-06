@@ -1,40 +1,53 @@
 package com.vji.aquaqaapi.configuration;
 
 
-import com.vji.aquaqaapi.security.filters.JWTAuthorizationFilter;
-import com.vji.aquaqaapi.security.filters.UserAuthenticationFilter;
-import lombok.NonNull;
+
+import com.vji.aquaqaapi.configuration.security.filter.JWTAuthorizationFilter;
+import com.vji.aquaqaapi.configuration.security.filter.UserAuthenticationFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import lombok.NonNull;
+
+
+import static org.springframework.security.config.Customizer.withDefaults;
+
+
 @EnableWebSecurity
 @Configuration
 public class WebSecurityConfig {
-    private final UserDetailsService userDetailsService;
-    private final JWTAuthorizationFilter jwtAuthorizationFilter;
 
     @Autowired
-    public WebSecurityConfig(UserDetailsService userDetailsService,
-                             JWTAuthorizationFilter jwtAuthorizationFilter1){
-        this.userDetailsService = userDetailsService;
-        this.jwtAuthorizationFilter = jwtAuthorizationFilter1;
-    }
+    private JWTAuthorizationFilter authorizationFilter;
 
-    private static final String[] AUTHORIZED_REQUEST = {"/user","/login"};
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+
+    @Value("${vji.security.allow-request}")
+    private String[] allowedPaths;
     @Bean
     public WebMvcConfigurer corsConfigurer() {
+
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(@NonNull CorsRegistry registry) {
@@ -48,45 +61,32 @@ public class WebSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http,
-                                           AuthenticationManager authManager) throws Exception{
+    SecurityFilterChain web(HttpSecurity http,  AuthenticationManager authManager) throws Exception {
 
         UserAuthenticationFilter authenticationFilter = new UserAuthenticationFilter();
         authenticationFilter.setAuthenticationManager(authManager);
-        authenticationFilter.setFilterProcessesUrl("/login");
+        authenticationFilter.setFilterProcessesUrl("/user/sign-in");
 
-        return http.cors().and()
-                .csrf().disable()
-                .authorizeHttpRequests()
-                .requestMatchers(AUTHORIZED_REQUEST)
-                .permitAll()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .httpBasic()
-                .and()
-                .exceptionHandling()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+        return http.csrf(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())
+                .exceptionHandling(Customizer.withDefaults())
                 .addFilter(authenticationFilter)
-                .addFilterBefore(jwtAuthorizationFilter, UserAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(authorizationFilter, UserAuthenticationFilter.class)
+                .authorizeHttpRequests((authorized) -> authorized
+                        .requestMatchers(allowedPaths)
+                        .permitAll().anyRequest().authenticated())
+                .httpBasic(Customizer.withDefaults())
+                .sessionManagement(sessionManagement ->
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                ).build();
     }
 
     @Bean
-    public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-        return http.getSharedObject(AuthenticationManagerBuilder.class)
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder())
-                .and().build();
+    public AuthenticationManager authManager() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder);
+        return new ProviderManager(authProvider);
     }
-
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
-
-
 }
+

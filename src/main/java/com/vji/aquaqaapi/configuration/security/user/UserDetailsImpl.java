@@ -1,4 +1,4 @@
-package com.vji.aquaqaapi.security.user;
+package com.vji.aquaqaapi.configuration.security.user;
 
 import com.vji.aquaqaapi.entities.User;
 import lombok.AllArgsConstructor;
@@ -11,8 +11,7 @@ import java.util.Collections;
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
-    private final User user;
-
+    private User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
