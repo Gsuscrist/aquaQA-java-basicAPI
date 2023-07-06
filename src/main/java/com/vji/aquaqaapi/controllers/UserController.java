@@ -1,11 +1,9 @@
 package com.vji.aquaqaapi.controllers;
 
-import com.vji.aquaqaapi.controllers.dtos.requests.CreateReportRequest;
+
 import com.vji.aquaqaapi.controllers.dtos.requests.CreateUserRequest;
 import com.vji.aquaqaapi.controllers.dtos.requests.UpdateUserRequest;
 import com.vji.aquaqaapi.controllers.dtos.responses.BaseResponse;
-import com.vji.aquaqaapi.controllers.dtos.responses.GetUserResponse;
-import com.vji.aquaqaapi.repositories.IUserRepository;
 import com.vji.aquaqaapi.services.interfaces.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,7 @@ public class UserController {
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
-    @PostMapping("/sing-up")
+    @PostMapping("/sign-up")
     public ResponseEntity<BaseResponse> create(@RequestBody CreateUserRequest request){
         BaseResponse baseResponse = service.create(request);
         return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
