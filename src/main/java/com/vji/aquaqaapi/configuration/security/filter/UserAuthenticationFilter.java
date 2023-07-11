@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.vji.aquaqaapi.configuration.security.user.AuthCredentials;
 import com.vji.aquaqaapi.configuration.security.user.UserDetailsImpl;
 import com.vji.aquaqaapi.controllers.dtos.responses.BaseResponse;
+import com.vji.aquaqaapi.controllers.dtos.responses.LoginResponse;
 import com.vji.aquaqaapi.utilities.TokenUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,7 @@ import java.io.PrintWriter;
 import java.util.Collections;
 
 public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request,
@@ -54,9 +56,12 @@ public class UserAuthenticationFilter extends UsernamePasswordAuthenticationFilt
         String token = TokenUtil.createToken(userDetails.getName(), userDetails.getUsername());
         response.addHeader("Authorization", "Bearer " + token);
 
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setToken("Bearer "+ token);
+        loginResponse.setRol(userDetails.getRole());
 
         BaseResponse baseResponse = BaseResponse.builder()
-                .data("Bearer " + token)
+                .data(loginResponse)
                 .message("Successfully authentication")
                 .success(true)
                 .httpStatus(HttpStatus.OK).build();

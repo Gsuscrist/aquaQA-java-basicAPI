@@ -2,6 +2,7 @@ package com.vji.aquaqaapi.controllers;
 
 
 import com.vji.aquaqaapi.controllers.dtos.requests.CreateUserRequest;
+import com.vji.aquaqaapi.controllers.dtos.requests.LoginRequest;
 import com.vji.aquaqaapi.controllers.dtos.requests.UpdateUserRequest;
 import com.vji.aquaqaapi.controllers.dtos.responses.BaseResponse;
 import com.vji.aquaqaapi.services.interfaces.IUserService;
@@ -21,6 +22,13 @@ public class UserController {
     public ResponseEntity<BaseResponse> get(@PathVariable Long id){
     BaseResponse baseResponse = service.get(id);
     return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
+    }
+
+    @PostMapping("email")
+    public ResponseEntity<BaseResponse> getByEmail(@RequestBody LoginRequest request){
+
+        BaseResponse baseResponse = service.findByEmail(request.getEmail());
+        return new ResponseEntity<>(baseResponse, baseResponse.getHttpStatus());
     }
 
     @GetMapping
