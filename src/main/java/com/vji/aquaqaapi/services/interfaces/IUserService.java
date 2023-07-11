@@ -8,6 +8,8 @@ import com.vji.aquaqaapi.entities.User;
 public interface IUserService {
     BaseResponse get(Long id);
 
+    BaseResponse findByEmail(String email);
+
     BaseResponse list();
 
     BaseResponse create(CreateUserRequest request);

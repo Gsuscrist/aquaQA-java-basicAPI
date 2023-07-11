@@ -51,4 +51,6 @@ public class UserDetailsImpl implements UserDetails {
     public String getName() {
         return user.getName();
     }
+
+    public String getRole(){return user.getRol();}
 }

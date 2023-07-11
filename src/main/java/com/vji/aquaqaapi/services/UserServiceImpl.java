@@ -37,6 +37,17 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public BaseResponse findByEmail(String email) {
+        GetUserResponse response = from(getUserByEmail(email));
+
+        return BaseResponse.builder()
+                .data(response)
+                .message("User by email")
+                .success(Boolean.TRUE)
+                .httpStatus(HttpStatus.OK).build();
+    }
+
+    @Override
     public User getUserByEmail(String email) {
         return repository.findByEmail(email)
                 .orElseThrow(RuntimeException::new);
@@ -80,6 +91,7 @@ public class UserServiceImpl implements IUserService {
         return repository.findById(id).orElseThrow(()->new RuntimeException("user do not exist"));
 
     }
+
 
     @Override
     public BaseResponse update(Long id, UpdateUserRequest request) {
